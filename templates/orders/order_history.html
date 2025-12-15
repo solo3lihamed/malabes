@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}طلباتي - متجر الأزياء المرح{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem; font-weight: 900;">
+        طلباتي 📋
+    </h1>
+
+    {% if orders %}
+    <div style="display: grid; gap: 1.5rem;">
+        {% for order in orders %}
+        <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); transition: all 0.3s ease;"
+            onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                <div>
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+                        طلب #{{ order.order_number }}
+                    </h2>
+                    <p style="color: var(--text-secondary);">
+                        📅 {{ order.created_at|date:"d/m/Y - H:i" }}
+                    </p>
+                </div>
+                <div style="text-align: left;">
+                    <span style="display: inline-block; padding: 0.5rem 1rem; border-radius: var(--radius-full); font-weight: 700; color: white;
+                                 {% if order.status == 'pending' %}background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+                                 {% elif order.status == 'confirmed' %}background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                                 {% elif order.status == 'processing' %}background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                 {% elif order.status == 'shipped' %}background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                                 {% elif order.status == 'delivered' %}background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+                                 {% else %}background: #718096;{% endif %}">
+                        {{ order.status_display }}
+                    </span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem; overflow-x: auto; padding: 0.5rem 0;">
+                {% for item in order.items.all|slice:":5" %}
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                    style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-md); flex-shrink: 0;">
+                {% endfor %}
+                {% if order.items.count > 5 %}
+                <div
+                    style="width: 80px; height: 80px; background: var(--primary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0;">
+                    +{{ order.items.count|add:"-5" }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 1rem;">
+                <div>
+                    <p style="color: var(--text-secondary); margin-bottom: 0.25rem;">المجموع الكلي</p>
+                    <p
+                        style="font-size: 1.5rem; font-weight: 900; background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                        {{ order.total_price }} ر.س
+                    </p>
+                </div>
+                <a href="{% url 'orders:order_detail' order.order_number %}" class="btn btn-primary">
+                    تتبع الطلب 📦
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div
+        style="text-align: center; padding: 4rem; background: white; border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+        <p style="font-size: 3rem; margin-bottom: 1rem;">📦</p>
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 1rem;">لا توجد طلبات بعد</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">ابدأ التسوق الآن واستمتع بأفضل العروض!</p>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-primary" style="font-size: 1.25rem;">
+            تسوق الآن ✨
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

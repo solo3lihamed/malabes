@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}المنتجات - متجر الأزياء المرح{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem; font-weight: 900;">
+        جميع المنتجات 🛍️
+    </h1>
+
+    <!-- Filter Bar -->
+    <div
+        style="background: white; padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+            <a href="{% url 'shop:product_list' %}"
+                class="btn {% if not current_category %}btn-primary{% else %}btn-secondary{% endif %}"
+                style="padding: 0.75rem 1.5rem;">
+                الكل
+            </a>
+            {% for category in categories %}
+            <a href="{% url 'shop:product_list' %}?category={{ category.slug }}"
+                class="btn {% if current_category == category.slug %}btn-primary{% else %}btn-secondary{% endif %}"
+                style="padding: 0.75rem 1.5rem;">
+                {{ category.icon }} {{ category.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+            {% if product.has_discount %}
+            <span class="product-badge">خصم! 🔥</span>
+            {% endif %}
+            <a href="{% url 'shop:product_detail' product.slug %}">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            </a>
+            <div class="product-info">
+                <h3 class="product-name">{{ product.name }}</h3>
+                <div class="product-price">
+                    {{ product.get_price }} ر.س
+                    {% if product.has_discount %}
+                    <span class="price-old">{{ product.price }} ر.س</span>
+                    {% endif %}
+                </div>
+                <a href="{% url 'shop:product_detail' product.slug %}" class="btn btn-secondary" style="width: 100%;">
+                    عرض التفاصيل 👀
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+            <p style="font-size: 1.5rem; color: var(--text-secondary);">لا توجد منتجات 😢</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

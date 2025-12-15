@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}إتمام الطلب - متجر الأزياء المرح{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem; font-weight: 900;">
+        إتمام الطلب 🎉
+    </h1>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+        <!-- Checkout Form -->
+        <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+            <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 1.5rem;">
+                معلومات التوصيل 📦
+            </h2>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label class="form-label">الاسم الكامل *</label>
+                    <input type="text" name="full_name" class="form-input" required placeholder="أدخل اسمك الكامل">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">رقم الهاتف *</label>
+                    <input type="tel" name="phone" class="form-input" required placeholder="05xxxxxxxx">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">البريد الإلكتروني</label>
+                    <input type="email" name="email" class="form-input" placeholder="example@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">المدينة *</label>
+                    <input type="text" name="city" class="form-input" required placeholder="الرياض، جدة، الدمام...">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">العنوان الكامل *</label>
+                    <textarea name="address" class="form-textarea" required
+                        placeholder="الحي، الشارع، رقم المبنى..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">الرمز البريدي</label>
+                    <input type="text" name="postal_code" class="form-input" placeholder="12345">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">ملاحظات التوصيل</label>
+                    <textarea name="delivery_notes" class="form-textarea"
+                        placeholder="أي ملاحظات خاصة بالتوصيل..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">ملاحظات الطلب</label>
+                    <textarea name="notes" class="form-textarea" placeholder="أي ملاحظات إضافية..."></textarea>
+                </div>
+
+                <div
+                    style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; color: white;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">
+                        💰 طريقة الدفع
+                    </h3>
+                    <p style="font-size: 1.125rem;">
+                        <strong>الدفع عند الاستلام</strong> - ادفع نقداً عند استلام طلبك
+                    </p>
+                </div>
+
+                <button type="submit" class="btn btn-primary"
+                    style="width: 100%; font-size: 1.25rem; padding: 1.25rem;">
+                    تأكيد الطلب ✅
+                </button>
+            </form>
+        </div>
+
+        <!-- Order Summary -->
+        <div>
+            <div
+                style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); position: sticky; top: 120px;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center;">
+                    ملخص الطلب 📋
+                </h2>
+
+                <div style="max-height: 300px; overflow-y: auto; margin-bottom: 1rem;">
+                    {% for item in cart.items.all %}
+                    <div
+                        style="display: flex; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                            style="width: 60px; height: 60px; object-fit: cover; border-radius: var(--radius-sm);">
+                        <div style="flex: 1;">
+                            <p style="font-weight: 700; font-size: 0.875rem;">{{ item.product.name }}</p>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem;">
+                                {{ item.quantity }} × {{ item.product.get_price }} ر.س
+                            </p>
+                        </div>
+                        <p style="font-weight: 700;">{{ item.subtotal }} ر.س</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div style="border-top: 2px solid #e2e8f0; padding-top: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                        <span style="color: var(--text-secondary);">عدد المنتجات:</span>
+                        <span style="font-weight: 700;">{{ cart.total_items }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span style="color: var(--text-secondary);">المجموع:</span>
+                        <span style="font-weight: 700;">{{ cart.total_price }} ر.س</span>
+                    </div>
+                </div>
+
+                <div style="border-top: 2px solid #e2e8f0; padding-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: 900;">
+                        <span>المجموع الكلي:</span>
+                        <span
+                            style="background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                            {{ cart.total_price }} ر.س
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media (max-width: 768px) {
+        .container>div:first-child {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}حسابي - متجر الأزياء المرح{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem; font-weight: 900;">
+        حسابي 👤
+    </h1>
+
+    <div style="max-width: 600px; margin: 0 auto;">
+        <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div
+                    style="width: 100px; height: 100px; border-radius: 50%; background: var(--primary); margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white;">
+                    👤
+                </div>
+                <h2 style="font-size: 1.75rem; font-weight: 700;">{{ user.username }}</h2>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label class="form-label">رقم الهاتف</label>
+                    <input type="tel" name="phone" value="{{ profile.phone }}" class="form-input"
+                        placeholder="05xxxxxxxx">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">المدينة</label>
+                    <input type="text" name="city" value="{{ profile.city }}" class="form-input"
+                        placeholder="الرياض، جدة...">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">العنوان</label>
+                    <textarea name="address" class="form-textarea"
+                        placeholder="الحي، الشارع...">{{ profile.address }}</textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.125rem; padding: 1rem;">
+                    حفظ التغييرات ✅
+                </button>
+            </form>
+
+            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
+                <a href="{% url 'orders:order_history' %}" class="btn btn-secondary"
+                    style="width: 100%; text-align: center; margin-bottom: 1rem;">
+                    طلباتي 📋
+                </a>
+                <a href="{% url 'accounts:logout' %}" class="btn btn-secondary"
+                    style="width: 100%; text-align: center; background: var(--secondary);">
+                    تسجيل خروج 👋
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

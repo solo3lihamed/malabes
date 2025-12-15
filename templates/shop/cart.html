@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}سلة التسوق - متجر الأزياء المرح{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem; font-weight: 900;">
+        سلة التسوق 🛒
+    </h1>
+
+    {% if cart.items.all %}
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+        <!-- Cart Items -->
+        <div>
+            {% for item in cart.items.all %}
+            <div
+                style="background: white; padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1rem; box-shadow: var(--shadow-sm); display: flex; gap: 1.5rem; align-items: center;">
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                    style="width: 120px; height: 120px; object-fit: cover; border-radius: var(--radius-md);">
+
+                <div style="flex: 1;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">
+                        {{ item.product.name }}
+                    </h3>
+                    {% if item.size %}
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">
+                        المقاس: <strong>{{ item.size }}</strong>
+                    </p>
+                    {% endif %}
+                    <p
+                        style="font-size: 1.25rem; font-weight: 700; background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                        {{ item.product.get_price }} ر.س
+                    </p>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <form method="post" action="{% url 'shop:update_cart_item' item.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="decrease">
+                        <button type="submit" class="btn btn-secondary"
+                            style="padding: 0.5rem 1rem; font-size: 1.25rem;">
+                            −
+                        </button>
+                    </form>
+
+                    <span style="font-size: 1.25rem; font-weight: 700; min-width: 40px; text-align: center;">
+                        {{ item.quantity }}
+                    </span>
+
+                    <form method="post" action="{% url 'shop:update_cart_item' item.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="increase">
+                        <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 1.25rem;">
+                            +
+                        </button>
+                    </form>
+                </div>
+
+                <div style="text-align: left;">
+                    <p style="font-size: 1.5rem; font-weight: 900; margin-bottom: 1rem;">
+                        {{ item.subtotal }} ر.س
+                    </p>
+                    <form method="post" action="{% url 'shop:remove_from_cart' item.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-secondary"
+                            style="background: var(--secondary); padding: 0.5rem 1rem;">
+                            🗑️ حذف
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Cart Summary -->
+        <div>
+            <div
+                style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); position: sticky; top: 120px;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center;">
+                    ملخص الطلب 📋
+                </h2>
+
+                <div style="border-top: 2px solid #e2e8f0; padding-top: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                        <span style="color: var(--text-secondary);">عدد المنتجات:</span>
+                        <span style="font-weight: 700;">{{ cart.total_items }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span style="color: var(--text-secondary);">المجموع الفرعي:</span>
+                        <span style="font-weight: 700;">{{ cart.total_price }} ر.س</span>
+                    </div>
+                </div>
+
+                <div style="border-top: 2px solid #e2e8f0; padding-top: 1rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: 900;">
+                        <span>المجموع الكلي:</span>
+                        <span
+                            style="background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                            {{ cart.total_price }} ر.س
+                        </span>
+                    </div>
+                </div>
+
+                <a href="{% url 'orders:checkout' %}" class="btn btn-primary"
+                    style="width: 100%; font-size: 1.25rem; padding: 1.25rem; text-align: center;">
+                    إتمام الطلب 🎉
+                </a>
+
+                <a href="{% url 'shop:product_list' %}" class="btn btn-secondary"
+                    style="width: 100%; margin-top: 1rem; text-align: center;">
+                    متابعة التسوق 🛍️
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div
+        style="text-align: center; padding: 4rem; background: white; border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+        <p style="font-size: 3rem; margin-bottom: 1rem;">🛒</p>
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 1rem;">سلة التسوق فارغة</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">ابدأ التسوق الآن واستمتع بأفضل العروض!</p>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-primary" style="font-size: 1.25rem;">
+            تسوق الآن ✨
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    @media (max-width: 768px) {
+        .container>div:first-child {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - متجر الأزياء المرح{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 3rem;">
+        <!-- Product Image -->
+        <div>
+            <div
+                style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                    style="width: 100%; border-radius: var(--radius-md);">
+            </div>
+
+            <!-- Additional Images -->
+            {% if product.images.all %}
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem;">
+                {% for image in product.images.all %}
+                <img src="{{ image.image.url }}" alt="{{ product.name }}"
+                    style="width: 100%; height: 100px; object-fit: cover; border-radius: var(--radius-md); cursor: pointer; box-shadow: var(--shadow-sm);">
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Product Info -->
+        <div>
+            <div
+                style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+                {% if product.has_discount %}
+                <span class="product-badge" style="position: static; margin-bottom: 1rem; display: inline-block;">
+                    خصم! 🔥
+                </span>
+                {% endif %}
+
+                <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem;">{{ product.name }}</h1>
+
+                <div
+                    style="font-size: 2rem; font-weight: 900; background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1.5rem;">
+                    {{ product.get_price }} ر.س
+                    {% if product.has_discount %}
+                    <span
+                        style="text-decoration: line-through; color: var(--text-light); font-size: 1.25rem; margin-right: 0.5rem;">
+                        {{ product.price }} ر.س
+                    </span>
+                    {% endif %}
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <span
+                        style="background: var(--accent); color: white; padding: 0.5rem 1rem; border-radius: var(--radius-full); font-weight: 700;">
+                        📦 {{ product.category.name }}
+                    </span>
+                    {% if product.stock > 0 %}
+                    <span
+                        style="background: var(--success); color: white; padding: 0.5rem 1rem; border-radius: var(--radius-full); font-weight: 700; margin-right: 0.5rem;">
+                        ✅ متوفر ({{ product.stock }})
+                    </span>
+                    {% else %}
+                    <span
+                        style="background: var(--secondary); color: white; padding: 0.5rem 1rem; border-radius: var(--radius-full); font-weight: 700; margin-right: 0.5rem;">
+                        ❌ غير متوفر
+                    </span>
+                    {% endif %}
+                </div>
+
+                <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 2rem;">
+                    {{ product.description }}
+                </p>
+
+                <!-- Add to Cart Form -->
+                {% if product.stock > 0 %}
+                <form method="post" action="{% url 'shop:add_to_cart' product.id %}">
+                    {% csrf_token %}
+
+                    {% if product.available_sizes %}
+                    <div class="form-group">
+                        <label class="form-label">المقاس 📏</label>
+                        <select name="size" class="form-select" required>
+                            <option value="">اختر المقاس</option>
+                            {% for size in product.available_sizes.split %}
+                            <option value="{{ size }}">{{ size }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <div class="form-group">
+                        <label class="form-label">الكمية 🔢</label>
+                        <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}"
+                            class="form-input" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary"
+                        style="width: 100%; font-size: 1.25rem; padding: 1.25rem;">
+                        أضف إلى السلة 🛒
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem; font-weight: 900;">
+        منتجات مشابهة 💫
+    </h2>
+    <div class="products-grid">
+        {% for related in related_products %}
+        <div class="product-card">
+            {% if related.has_discount %}
+            <span class="product-badge">خصم! 🔥</span>
+            {% endif %}
+            <a href="{% url 'shop:product_detail' related.slug %}">
+                <img src="{{ related.image.url }}" alt="{{ related.name }}" class="product-image">
+            </a>
+            <div class="product-info">
+                <h3 class="product-name">{{ related.name }}</h3>
+                <div class="product-price">
+                    {{ related.get_price }} ر.س
+                    {% if related.has_discount %}
+                    <span class="price-old">{{ related.price }} ر.س</span>
+                    {% endif %}
+                </div>
+                <a href="{% url 'shop:product_detail' related.slug %}" class="btn btn-secondary" style="width: 100%;">
+                    عرض التفاصيل 👀
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    @media (max-width: 768px) {
+        .container>div:first-child {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+{% endblock %}

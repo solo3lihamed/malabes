@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}تتبع الطلب #{{ order.order_number }} - متجر الأزياء المرح{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem; font-weight: 900;">
+        تتبع الطلب 📦
+    </h1>
+
+    <!-- Order Status Steps -->
+    <div
+        style="background: white; padding: 3rem 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); margin-bottom: 2rem;">
+        <h2 style="text-align: center; font-size: 1.75rem; font-weight: 700; margin-bottom: 2rem;">
+            رقم الطلب: <span
+                style="background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                #{{ order.order_number }}
+            </span>
+        </h2>
+
+        <!-- Progress Steps -->
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; position: relative; margin: 3rem 0;">
+            <!-- Progress Line -->
+            <div
+                style="position: absolute; top: 30px; right: 0; left: 0; height: 4px; background: #e2e8f0; z-index: 0;">
+                <div
+                    style="height: 100%; background: var(--success); width: {% if order.status == 'pending' %}0%{% elif order.status == 'confirmed' %}25%{% elif order.status == 'processing' %}50%{% elif order.status == 'shipped' %}75%{% elif order.status == 'delivered' %}100%{% else %}0%{% endif %}; transition: width 0.5s ease;">
+                </div>
+            </div>
+
+            <!-- Step 1: Pending -->
+            <div style="text-align: center; z-index: 1; flex: 1;">
+                <div
+                    style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; {% if order.status_step >= 1 %}background: var(--success);{% else %}background: #e2e8f0;{% endif %} box-shadow: var(--shadow-md);">
+                    {% if order.status_step >= 1 %}✅{% else %}⏳{% endif %}
+                </div>
+                <p
+                    style="font-weight: 700; {% if order.status_step >= 1 %}color: var(--text-primary);{% else %}color: var(--text-light);{% endif %}">
+                    قيد الانتظار
+                </p>
+            </div>
+
+            <!-- Step 2: Confirmed -->
+            <div style="text-align: center; z-index: 1; flex: 1;">
+                <div
+                    style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; {% if order.status_step >= 2 %}background: var(--success);{% else %}background: #e2e8f0;{% endif %} box-shadow: var(--shadow-md);">
+                    {% if order.status_step >= 2 %}✅{% else %}📋{% endif %}
+                </div>
+                <p
+                    style="font-weight: 700; {% if order.status_step >= 2 %}color: var(--text-primary);{% else %}color: var(--text-light);{% endif %}">
+                    تم التأكيد
+                </p>
+            </div>
+
+            <!-- Step 3: Processing -->
+            <div style="text-align: center; z-index: 1; flex: 1;">
+                <div
+                    style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; {% if order.status_step >= 3 %}background: var(--success);{% else %}background: #e2e8f0;{% endif %} box-shadow: var(--shadow-md);">
+                    {% if order.status_step >= 3 %}✅{% else %}📦{% endif %}
+                </div>
+                <p
+                    style="font-weight: 700; {% if order.status_step >= 3 %}color: var(--text-primary);{% else %}color: var(--text-light);{% endif %}">
+                    قيد التجهيز
+                </p>
+            </div>
+
+            <!-- Step 4: Shipped -->
+            <div style="text-align: center; z-index: 1; flex: 1;">
+                <div
+                    style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; {% if order.status_step >= 4 %}background: var(--success);{% else %}background: #e2e8f0;{% endif %} box-shadow: var(--shadow-md);">
+                    {% if order.status_step >= 4 %}✅{% else %}🚚{% endif %}
+                </div>
+                <p
+                    style="font-weight: 700; {% if order.status_step >= 4 %}color: var(--text-primary);{% else %}color: var(--text-light);{% endif %}">
+                    تم الشحن
+                </p>
+            </div>
+
+            <!-- Step 5: Delivered -->
+            <div style="text-align: center; z-index: 1; flex: 1;">
+                <div
+                    style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; {% if order.status_step >= 5 %}background: var(--success);{% else %}background: #e2e8f0;{% endif %} box-shadow: var(--shadow-md);">
+                    {% if order.status_step >= 5 %}🎉{% else %}🏠{% endif %}
+                </div>
+                <p
+                    style="font-weight: 700; {% if order.status_step >= 5 %}color: var(--text-primary);{% else %}color: var(--text-light);{% endif %}">
+                    تم التوصيل
+                </p>
+            </div>
+        </div>
+
+        <div
+            style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--radius-md); color: white; font-size: 1.25rem; font-weight: 700;">
+            الحالة الحالية: {{ order.status_display }}
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <!-- Order Items -->
+        <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">
+                المنتجات 🛍️
+            </h2>
+            {% for item in order.items.all %}
+            <div
+                style="display: flex; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; {% if not forloop.last %}border-bottom: 1px solid #e2e8f0;{% endif %}">
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                    style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-md);">
+                <div style="flex: 1;">
+                    <h3 style="font-weight: 700; margin-bottom: 0.25rem;">{{ item.product.name }}</h3>
+                    {% if item.size %}
+                    <p style="color: var(--text-secondary); font-size: 0.875rem;">المقاس: {{ item.size }}</p>
+                    {% endif %}
+                    <p style="color: var(--text-secondary); font-size: 0.875rem;">
+                        الكمية: {{ item.quantity }} × {{ item.price }} ر.س
+                    </p>
+                </div>
+                <p style="font-weight: 700; font-size: 1.125rem;">{{ item.subtotal }} ر.س</p>
+            </div>
+            {% endfor %}
+
+            <div style="border-top: 2px solid #e2e8f0; padding-top: 1rem; margin-top: 1rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: 900;">
+                    <span>المجموع الكلي:</span>
+                    <span
+                        style="background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                        {{ order.total_price }} ر.س
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Info -->
+        <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">
+                معلومات التوصيل 📍
+            </h2>
+            <div style="line-height: 2;">
+                <p><strong>الاسم:</strong> {{ order.shipping.full_name }}</p>
+                <p><strong>الهاتف:</strong> {{ order.shipping.phone }}</p>
+                {% if order.shipping.email %}
+                <p><strong>البريد:</strong> {{ order.shipping.email }}</p>
+                {% endif %}
+                <p><strong>المدينة:</strong> {{ order.shipping.city }}</p>
+                <p><strong>العنوان:</strong> {{ order.shipping.address }}</p>
+                {% if order.shipping.postal_code %}
+                <p><strong>الرمز البريدي:</strong> {{ order.shipping.postal_code }}</p>
+                {% endif %}
+                {% if order.shipping.notes %}
+                <div style="margin-top: 1rem; padding: 1rem; background: #f7fafc; border-radius: var(--radius-md);">
+                    <strong>ملاحظات التوصيل:</strong>
+                    <p style="margin-top: 0.5rem;">{{ order.shipping.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div
+                style="margin-top: 1.5rem; padding: 1rem; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); border-radius: var(--radius-md); color: white;">
+                <p style="font-weight: 700; margin-bottom: 0.5rem;">💰 طريقة الدفع</p>
+                <p>الدفع عند الاستلام</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{% url 'shop:home' %}" class="btn btn-primary" style="font-size: 1.125rem;">
+            العودة للرئيسية 🏠
+        </a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'orders:order_history' %}" class="btn btn-secondary"
+            style="font-size: 1.125rem; margin-right: 1rem;">
+            طلباتي 📋
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    @media (max-width: 768px) {
+        .container>div:nth-child(3) {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+{% endblock %}

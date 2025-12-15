@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}متجر الأزياء المرح{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="{% url 'shop:home' %}">
+                        <span class="logo-icon">🎨</span>
+                        <span class="logo-text">متجر الأزياء</span>
+                    </a>
+                </div>
+                
+                <nav class="nav">
+                    <a href="{% url 'shop:home' %}" class="nav-link">الرئيسية</a>
+                    <a href="{% url 'shop:product_list' %}" class="nav-link">المنتجات</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'orders:order_history' %}" class="nav-link">طلباتي</a>
+                        <a href="{% url 'accounts:profile' %}" class="nav-link">حسابي</a>
+                        <a href="{% url 'accounts:logout' %}" class="nav-link">تسجيل خروج</a>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="nav-link">تسجيل دخول</a>
+                        <a href="{% url 'accounts:register' %}" class="nav-link">تسجيل جديد</a>
+                    {% endif %}
+                </nav>
+                
+                <div class="header-actions">
+                    <a href="{% url 'shop:cart' %}" class="cart-btn">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="message message-{{ message.tags }}">
+            <span class="message-icon">
+                {% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}❌{% elif message.tags == 'warning' %}⚠️{% else %}ℹ️{% endif %}
+            </span>
+            <span class="message-text">{{ message }}</span>
+            <button class="message-close" onclick="this.parentElement.remove()">×</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>متجر الأزياء المرح 🎉</h3>
+                    <p>أفضل الملابس والأحذية والإكسسوارات لجميع الفئات</p>
+                </div>
+                <div class="footer-section">
+                    <h4>روابط سريعة</h4>
+                    <ul>
+                        <li><a href="{% url 'shop:product_list' %}">المنتجات</a></li>
+                        <li><a href="{% url 'shop:cart' %}">السلة</a></li>
+                        {% if user.is_authenticated %}
+                        <li><a href="{% url 'orders:order_history' %}">طلباتي</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>تواصل معنا</h4>
+                    <p>📧 info@funshop.com</p>
+                    <p>📱 +123 456 7890</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 متجر الأزياء المرح. جميع الحقوق محفوظة ❤️</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

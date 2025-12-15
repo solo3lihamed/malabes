@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}الرئيسية - متجر الأزياء المرح{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <h1>مرحباً بك في متجر الأزياء المرح! 🎉</h1>
+        <p>اكتشف أفضل الملابس والأحذية والإكسسوارات بأسعار رائعة</p>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-primary">تسوق الآن ✨</a>
+    </div>
+</section>
+
+<div class="container">
+    <!-- Categories -->
+    <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem; font-weight: 900;">
+        تصفح حسب الفئة 🛍️
+    </h2>
+    <div class="categories">
+        {% for category in categories %}
+        <a href="{% url 'shop:product_list' %}?category={{ category.slug }}" class="category-card">
+            <span class="category-icon">{{ category.icon }}</span>
+            <h3>{{ category.name }}</h3>
+        </a>
+        {% empty %}
+        <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+            <p style="font-size: 1.5rem; color: var(--text-secondary);">لا توجد فئات حالياً 📦</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Featured Products -->
+    <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem; margin-top: 3rem; font-weight: 900;">
+        المنتجات المميزة ⭐
+    </h2>
+    <div class="products-grid">
+        {% for product in featured_products %}
+        <div class="product-card">
+            {% if product.has_discount %}
+            <span class="product-badge">خصم! 🔥</span>
+            {% endif %}
+            <a href="{% url 'shop:product_detail' product.slug %}">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            </a>
+            <div class="product-info">
+                <h3 class="product-name">{{ product.name }}</h3>
+                <div class="product-price">
+                    {{ product.get_price }} ر.س
+                    {% if product.has_discount %}
+                    <span class="price-old">{{ product.price }} ر.س</span>
+                    {% endif %}
+                </div>
+                <a href="{% url 'shop:product_detail' product.slug %}" class="btn btn-secondary" style="width: 100%;">
+                    عرض التفاصيل 👀
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+            <p style="font-size: 1.5rem; color: var(--text-secondary);">لا توجد منتجات مميزة حالياً 🎁</p>
+            <a href="{% url 'shop:product_list' %}" class="btn btn-primary" style="margin-top: 1rem;">
+                تصفح جميع المنتجات
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

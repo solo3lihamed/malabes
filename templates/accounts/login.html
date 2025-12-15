@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}تسجيل دخول - متجر الأزياء المرح{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="max-width: 500px; margin: 0 auto;">
+        <div style="background: white; padding: 3rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem;">
+                    مرحباً بعودتك! 👋
+                </h1>
+                <p style="color: var(--text-secondary);">
+                    سجل دخولك للمتابعة
+                </p>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label class="form-label">اسم المستخدم *</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                    <p style="color: #f5576c; font-size: 0.875rem; margin-top: 0.25rem;">{{ form.username.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">كلمة المرور *</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                    <p style="color: #f5576c; font-size: 0.875rem; margin-top: 0.25rem;">{{ form.password.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                <div
+                    style="background: #fee; border: 1px solid #f5576c; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
+                    <p style="color: #f5576c; font-weight: 600;">{{ form.non_field_errors.0 }}</p>
+                </div>
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary"
+                    style="width: 100%; font-size: 1.125rem; padding: 1rem; margin-top: 1rem;">
+                    تسجيل دخول 🚀
+                </button>
+            </form>
+
+            <div style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0;">
+                <p style="color: var(--text-secondary);">
+                    ليس لديك حساب؟
+                    <a href="{% url 'accounts:register' %}"
+                        style="color: #667eea; font-weight: 700; text-decoration: none;">
+                        سجل الآن
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-input {
+        width: 100%;
+    }
+</style>
+{% endblock %}
