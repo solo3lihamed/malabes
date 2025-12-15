@@ -68,6 +68,8 @@ class OrderItem(models.Model):
     @property
     def subtotal(self):
         """Calculate item subtotal"""
+        if self.price is None:
+            return 0
         return self.price * self.quantity
 
 
